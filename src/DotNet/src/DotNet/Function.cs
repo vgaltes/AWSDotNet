@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using Amazon.Lambda.Core;
+using Amazon.Lambda.APIGatewayEvents;
+using Newtonsoft.Json;
 
 // Assembly attribute to enable the Lambda function's JSON input to be converted into a .NET class.
 [assembly: LambdaSerializer(typeof(Amazon.Lambda.Serialization.Json.JsonSerializer))]
@@ -19,9 +21,21 @@ namespace DotNet
         /// <param name="input"></param>
         /// <param name="context"></param>
         /// <returns></returns>
-        public string FunctionHandler(ILambdaContext context)
+        public APIGatewayProxyResponse FunctionHandler(ILambdaContext context)
         {
-            return "Hello world";
+            var result = new {
+                message = "Hello world"
+            };
+
+            var response = new APIGatewayProxyResponse
+            {
+                StatusCode = 200,
+                Body = JsonConvert.SerializeObject(result),
+                Headers = new Dictionary<string, string> { { "Content-Type", "application/json" } }
+            };
+
+            return response;
         }
     }
+
 }
